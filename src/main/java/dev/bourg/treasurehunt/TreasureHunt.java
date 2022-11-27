@@ -2,8 +2,7 @@ package dev.bourg.treasurehunt;
 
 import dev.bourg.treasurehunt.commands.GameCommand;
 import dev.bourg.treasurehunt.game.GameManager;
-import dev.bourg.treasurehunt.listeners.BlockBreakListener;
-import dev.bourg.treasurehunt.listeners.JoinListener;
+import dev.bourg.treasurehunt.listeners.*;
 import dev.bourg.treasurehunt.tabCompleters.GameCommandCompleter;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -33,6 +32,9 @@ public final class TreasureHunt extends JavaPlugin {
         PluginManager pluginManager = getServer().getPluginManager();
         pluginManager.registerEvents(new BlockBreakListener(this.gameManager), this);
         pluginManager.registerEvents(new JoinListener(this.gameManager), this);
+        pluginManager.registerEvents(new InventoryClickListener(this.gameManager), this);
+        pluginManager.registerEvents(new InteractListener(this.gameManager), this);
+        pluginManager.registerEvents(new SneakListener(this.gameManager), this);
     }
 
 }
