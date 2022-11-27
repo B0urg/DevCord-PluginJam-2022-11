@@ -41,8 +41,8 @@ public class GameStartCountdownTask extends BukkitRunnable {
             });
         }
         Bukkit.getOnlinePlayers().forEach(player -> {
-            player.setLevel(timeLeft / 18);
-            player.setExp(timeLeft / 15F);
+            player.setLevel(timeLeft);
+            player.setExp(timeLeft / 31F);
         });
     }
 }
