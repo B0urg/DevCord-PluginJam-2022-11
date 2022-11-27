@@ -26,6 +26,7 @@ public class WaitForSecondQuestTask extends BukkitRunnable {
                 player.teleport(new Location(Bukkit.getWorld("world"), 187, 56, 43));
             });
             Bukkit.broadcast(Component.text("Die zweite Quest wird ein kleines redstone Rätsel, Ziel ist es das redstone unter dem roten glass zu deaktivieren"));
+            gameManager.getVoteManager().stopVoting();
             gameManager.setGameState(GameState.QUEST2);
         }else {
             gameManager.setGameState(GameState.DISCOVERING);

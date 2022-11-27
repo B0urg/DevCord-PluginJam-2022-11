@@ -13,6 +13,7 @@ import org.bukkit.block.data.Bisected;
 import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Marker;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
@@ -59,7 +60,7 @@ public class GameManager {
                 if(this.gameStartCountdownTask != null) this.gameStartCountdownTask.cancel();
                 Bukkit.broadcast(Component.text("§aGame started"));
                 Inventory inventory = Bukkit.createInventory(null, 1*9 , Component.text("Side Quest 1?[+2 Gold]"));
-                inventory.setItem(2, new ItemBuilder(Material.GREEN_DYE).setDisplayname("Ja").build());
+                inventory.setItem(2, new ItemBuilder(Material.LIME_DYE).setDisplayname("Ja").build());
                 inventory.setItem(6, new ItemBuilder(Material.RED_DYE).setDisplayname("Nein").build());
                 this.voteManager.startVoting();
                 Bukkit.getOnlinePlayers().forEach(player -> {
@@ -83,8 +84,12 @@ public class GameManager {
                     player.teleport(moutainViewer.getLocation());
                     player.setSpectatorTarget(moutainViewer);
                 });
-                Bukkit.broadcast(Component.text("§6§l +2 Gold"));
-                Bukkit.broadcast(Component.text("§aJetzt da du deine erste Side Quest erledigt hast und dein Gold erhalten hast, musst du denn Bunker mit den verborgenen Schätzen finden und ihn öffnen(in die mitte der Tür klicken). §e(Tipp: Der Eingang befindet sich wie im Film im Boden und ihr werdet im umkreis von 30 Blöcken von der X Kordinate ausgesetzt.)"));
+                if(completedquests >= 1){
+                    Bukkit.broadcast(Component.text("§6§l +2 Gold"));
+                    Bukkit.broadcast(Component.text("§aJetzt da du deine erste Side Quest erledigt hast und dein Gold erhalten hast, musst du denn Bunker mit den verborgenen Schätzen finden und ihn öffnen(in die mitte der Tür klicken). §e(Tipp: Der Eingang befindet sich wie im Film im Boden und ihr werdet im umkreis von 30 Blöcken von der X Kordinate ausgesetzt.)"));
+                }else {
+                    Bukkit.broadcast(Component.text("§aNun musst du denn Bunker mit den verborgenen Schätzen finden und ihn öffnen(in die mitte der Tür klicken). §e(Tipp: Der Eingang befindet sich wie im Film im Boden und ihr werdet im umkreis von 30 Blöcken von der X Kordinate ausgesetzt.)"));
+                }
                 Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
                     @Override
                     public void run() {
@@ -100,14 +105,8 @@ public class GameManager {
                 this.waitForFirstQuestTask.cancel();
             }
             case QUEST2 -> {
-                ArrayList<UUID> spectating = new ArrayList<>();
-                Bukkit.getOnlinePlayers().stream().filter(player -> player.getGameMode() == GameMode.SURVIVAL).forEach(player -> {
-                    if(player.getName().equalsIgnoreCase("Hadde")) return;
-                    spectating.add(player.getUniqueId());
-                    player.setGameMode(GameMode.SPECTATOR);
-                    player.setSpectatorTarget(Bukkit.getPlayer("Hadde"));
-                });
-                this.waitForCompleteSecondQuestTask = new WaitForCompleteSecondQuestTask(this, spectating);
+
+                this.waitForCompleteSecondQuestTask = new WaitForCompleteSecondQuestTask(this);
                 waitForCompleteSecondQuestTask.runTaskTimer(plugin, 0, 20);
             }
 
@@ -132,12 +131,16 @@ public class GameManager {
                         player.teleport(new Location(Bukkit.getWorld("world"), 169, 54, 37));
                     }else if(completedquests == 1) {
                         player.teleport(new Location(Bukkit.getWorld("world"), 169, 54, 6));
-                        Bukkit.broadcast(Component.text("§aDoch was ist passiert, euer Gold ist zu schwer und das auto ist liegen geblieben. Hättet ihr doch nur kein Gold genommen"));
                     }else {
-                        Bukkit.broadcast(Component.text("§aDoch was ist passiert, euer Gold ist zu schwer und das auto ist liegen geblieben. Hättet ihr doch nur kein/weniger Gold genommen"));
                         player.teleport(new Location(Bukkit.getWorld("world"), 169, 54, -7));
                     }
                 });
+                if(completedquests == 1){
+                    Bukkit.broadcast(Component.text("§aDoch was ist passiert, euer Gold ist zu schwer und das auto ist liegen geblieben. Hättet ihr doch nur kein Gold genommen"));
+
+                }else if(completedquests == 2) {
+                    Bukkit.broadcast(Component.text("§aDoch was ist passiert, euer Gold ist zu schwer und das auto ist liegen geblieben. Hättet ihr doch nur kein/weniger Gold genommen"));
+                }
                 FinalTimerTask timerTask = new FinalTimerTask(this);
                 timerTask.runTaskTimer(plugin, 0, 20);
             }
@@ -145,11 +148,19 @@ public class GameManager {
                 Bukkit.getOnlinePlayers().stream().filter(player -> player.getGameMode() == GameMode.SURVIVAL).forEach(player -> {
                     player.setGameMode(GameMode.SPECTATOR);
                     player.setSpectatorTarget(moutainViewer);
-                    if(won){
-                        Bukkit.broadcast(Component.text("§aGlückwunsch ihr habt gewonnen entweder seid ihr gut in jump and run oder seid dem motto gefolgt"));
-                    }else {
-                        Bukkit.broadcast(Component.text("§4Leider habt ihr es nicht geschaft. Vieleicht nextes mal"));
-                    }
+                });
+                if(won){
+                    Bukkit.broadcast(Component.text("§aGlückwunsch ihr habt gewonnen entweder seid ihr gut in jump and run oder seid dem motto gefolgt"));
+                }else {
+                    Bukkit.broadcast(Component.text("§4Leider habt ihr es nicht geschaft. Vieleicht nächstes mal"));
+                }
+                setGameState(GameState.LOBBY);
+            }
+            case LOBBY -> {
+                Bukkit.getOnlinePlayers().forEach(player ->  {
+                    player.teleport(new Location(Bukkit.getWorld("world"), 101, 96, 135, -180, 1));
+                    player.setGameMode(GameMode.SURVIVAL);
+
                 });
             }
 
@@ -176,13 +187,29 @@ public class GameManager {
             trapDoor.setFacing(BlockFace.NORTH);
 
         }
-        // Placing the cole
+
+        world.getBlockAt(200, 60, 21).setType(Material.POLISHED_ANDESITE);
+        world.getBlockAt( 200, 62, 21).setType(Material.POLISHED_ANDESITE);
+        world.getBlockAt( 198, 62, 21).setType(Material.POLISHED_ANDESITE);
+        world.getBlockAt( 198, 60, 21).setType(Material.POLISHED_ANDESITE);
+        world.getBlockAt(199 ,60, 21).setType(Material.ANDESITE);
+        world.getBlockAt(200, 61, 21).setType(Material.ANDESITE);
+        world.getBlockAt(199, 62, 21).setType(Material.ANDESITE);
+        world.getBlockAt(198, 61, 21).setType(Material.ANDESITE);
+        world.getBlockAt(199, 61, 21 ).setType(Material.LODESTONE);
+
+        world.getBlockAt(186 ,54, 46).setType(Material.REDSTONE_BLOCK);
+        if(world.getBlockAt(188 ,54, 46).getType() == Material.REDSTONE_BLOCK) world.getBlockAt(188, 54, 46).setType(Material.AIR);
+
+
+        // Placing the concrete
         for(int x = 201; x < 204;x++){
             for (int z = 26; z < 29; z++){
                 world.getBlockAt(x, 71, z).setType(Material.BLACK_CONCRETE);
             }
         }
         Bukkit.getWorld("world").getBlockAt(205, 72, 25).setType(Material.GRASS_BLOCK);
+        completedquests = 0;
     }
     public BlockManager getBlockManager(){
         return blockManager;

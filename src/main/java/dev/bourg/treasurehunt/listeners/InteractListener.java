@@ -37,8 +37,8 @@ public class InteractListener implements Listener {
               if(event.getClickedBlock().getLocation().getX() == -75 && event.getClickedBlock().getLocation().getY() == 83 && event.getClickedBlock().getLocation().getZ() == 73){
                   if(gameManager.getGameState() == GameState.QUEST1){
                       Bukkit.broadcast(Component.text("§a§l" + event.getPlayer().getName() + "§r§a hat den Knopf gefunden!"));
-                      gameManager.setGameState(GameState.SEARCH);
                       this.gameManager.setCompletedquests(gameManager.getCompletedquests() + 1);
+                      gameManager.setGameState(GameState.SEARCH);
                   }
               }
             }
@@ -64,7 +64,7 @@ public class InteractListener implements Listener {
                     });
 
                     Inventory inventory = Bukkit.createInventory(null, 1*9 , Component.text("Side Quest 2? [+2Gold]"));
-                    inventory.setItem(2, new ItemBuilder(Material.GREEN_DYE).setDisplayname("Ja").build());
+                    inventory.setItem(2, new ItemBuilder(Material.LIME_DYE).setDisplayname("Ja").build());
                     inventory.setItem(6, new ItemBuilder(Material.RED_DYE).setDisplayname("Nein").build());
                     this.gameManager.getVoteManager().startVoting();
                     Bukkit.getOnlinePlayers().forEach(player -> {
@@ -76,6 +76,7 @@ public class InteractListener implements Listener {
                 }
             }else if(event.getClickedBlock().getType().equals(Material.LODESTONE)){
                 if(gameManager.getGameState() != GameState.DISCOVERING) return;
+                if(!event.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.CLOCK)) return;
                 Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "fill 198 62 21 200 60 21 air");
             }
 

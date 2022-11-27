@@ -1,55 +1,46 @@
 package dev.bourg.treasurehunt.game;
 
-import io.netty.channel.epoll.Epoll;
-import org.apache.logging.log4j.core.appender.AppenderLoggingException;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
-import org.checkerframework.checker.units.qual.A;
 
-import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.HashMap;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class VoteManager {
 
     private boolean running = false;
-    private Integer players = 0;
-    private ArrayList<Boolean> votes = new ArrayList<>();
+    private HashMap<Player, Boolean> votes = new HashMap<>();
 
     private GameManager gameManager;
-
 
     public VoteManager(GameManager gameManager){
         this.gameManager = gameManager;
     }
-    public void setPlayers(int amount){
-        this.players = amount;
-    }
-    public void addVote(boolean bool){
-        if(!running)return;
-        if(votes.size() == players) return;
-        votes.add(bool);
 
+    public void addVote(boolean bool, Player player){
+        int players = Bukkit.getOnlinePlayers().stream().filter(player1 -> player1.getGameMode() == GameMode.SURVIVAL).toArray().length;
+        if(!running) return;
+        if(votes.size() == players) return;
+        votes.put(player, bool);
     }
     public Boolean getResult(){
-        if(votes.isEmpty()) return false;
-        AtomicInteger i = new AtomicInteger();
-        votes.forEach(aBoolean -> {
+        int players = Bukkit.getOnlinePlayers().stream().filter(player -> player.getGameMode() == GameMode.SURVIVAL).toArray().length;
+        AtomicReference<Integer> yes = new AtomicReference<>(0);
+        votes.forEach((player, aBoolean) -> {
             if(aBoolean){
-                i.getAndIncrement();
+                yes.getAndSet(yes.get() + 1);
             }
         });
-        boolean bool = i.get() >= players /2;
-        votes = new ArrayList<>();
+        return new Random().nextInt(players) < yes.get();
+    }
+    public void stopVoting(){
+        votes.clear();
         running = false;
-        return bool;
     }
     public void startVoting(){
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if(player.getGameMode() == GameMode.SURVIVAL){
-                players++;
-            }
-        }
         this.running = true;
     }
 

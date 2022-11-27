@@ -24,6 +24,7 @@ public class WaitForFirstQuestTask extends BukkitRunnable {
                 player.teleport(new Location(Bukkit.getWorld("world"), -46, 75, 104));
             });
             Bukkit.broadcast(Component.text("Die erste Quest wird eine klassische runde find the button sein."));
+            gameManager.getVoteManager().stopVoting();
             gameManager.setGameState(GameState.QUEST1);
         }else {
             gameManager.setGameState(GameState.SEARCH);

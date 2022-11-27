@@ -6,24 +6,22 @@ import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.material.Redstone;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.UUID;
 
 public class WaitForCompleteSecondQuestTask extends BukkitRunnable {
 
     private GameManager gameManager;
-    private Player player;
-    private ArrayList<UUID> spectating;
 
-    public WaitForCompleteSecondQuestTask(GameManager gameManager, ArrayList<UUID> spectating){
+    public WaitForCompleteSecondQuestTask(GameManager gameManager){
         this.gameManager = gameManager;
-        this.player = Bukkit.getPlayer("Hadde");
-        this.spectating = spectating;
     }
 
     @Override
@@ -31,16 +29,20 @@ public class WaitForCompleteSecondQuestTask extends BukkitRunnable {
         Block block = Bukkit.getWorld("world").getBlockAt(187, 53, 43);
         if(!block.isBlockPowered()){
             cancel();
-            Bukkit.broadcast(Component.text("§a§l" + player.getName() + "§r§a hat das rätsel gelöst"));
-            for (UUID uuid : spectating) {
-                Player player1 = Bukkit.getPlayer(uuid);
-                player1.setGameMode(GameMode.SURVIVAL);
-                player1.teleport( new Location(Bukkit.getWorld("world"), 199, 60, 24));
-            }
-            player.teleport(new Location(Bukkit.getWorld("world"), 199, 60, 24));
-            Bukkit.broadcast(Component.text("§aJetzt da ihr die zweite Quest erledigt habt könnz ihr weiter dazu mit der Uhr in die mitte der Tür klicken."));
-            this.gameManager.setGameState(GameState.DISCOVERING);
-            this.gameManager.setCompletedquests(gameManager.getCompletedquests() + 1);
+            Bukkit.getWorld("world").getBlockAt(187, 55, 43).setType(Material.GREEN_STAINED_GLASS);
+            Bukkit.broadcast(Component.text("§aDas rätsel wurde gelöst"));
+            Bukkit.getScheduler().runTaskLater(gameManager.getPlugin(), new Runnable() {
+                @Override
+                public void run() {
+                    for (Player player : Bukkit.getOnlinePlayers()) {
+                        player.teleport( new Location(Bukkit.getWorld("world"), 199, 60, 24));
+                    }
+                    Bukkit.broadcast(Component.text("§6§l +2 Gold"));
+                    Bukkit.broadcast(Component.text("§aJetzt da ihr die zweite Quest erledigt habt könnz ihr weiter dazu mit der Uhr in die mitte der Tür klicken."));
+                    gameManager.setGameState(GameState.DISCOVERING);
+                    gameManager.setCompletedquests(gameManager.getCompletedquests() + 1);
+                }
+            }, 100);
             return;
         }
     }
