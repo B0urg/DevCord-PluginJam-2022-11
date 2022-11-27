@@ -5,10 +5,10 @@ import com.mojang.authlib.properties.Property;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoPacket;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.craftbukkit.v1_19_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class PlayerManager {
@@ -46,5 +46,6 @@ public class PlayerManager {
             return new Property("textures", "ewogICJ0aW1lc3RhbXAiIDogMTY2OTQ5NjE5NDI0MCwKICAicHJvZmlsZUlkIiA6ICJmMjc0YzRkNjI1MDQ0ZTQxOGVmYmYwNmM3NWIyMDIxMyIsCiAgInByb2ZpbGVOYW1lIiA6ICJIeXBpZ3NlbCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS85MjlhNmJhZDUyMmJmZDQ0MjliMGQ5NWQ0ZDc3ZDc4YjUyZjA1NzlmYWMxNDEwMDdlN2ZhODFlYmNhOWRjMTExIgogICAgfQogIH0KfQ==", "WpStlvEBnofCUpUUAca6ooU/nVvKUBbqdx+1eKu1b3Z9ITHwzIHJcTD9VIjXt0I2rnFiulMdQNCKeC7fVDvk1ZBr10QSzXUEGO5bHYX3Gf05wPioUGRbVX/sDHVM8C6IIxbigrRFOi4BeALONTpGpB1aVZidEIYjfv+tyGJaNvoeE0x3if2pDfEtZzssJF/cCvR2ZAOZXi3j59jcE695Z0I91mL10GGSzPb4uO7vQUC9qVKRuQbbz/9oga5LYEr1iITyf4t1MUDJhawivf5yHR3ekLwLDMCwLBd8jhi5LNRXZnd5LLpQUW5j79ZnPzfPUlWUFr/K/2NsRDyj+Alg3PbXhcn1qR9n6Rqq6JkbjvEZI9ZSuuDg7recw5HMBmAXG1lH887pRG99kr0mLrEcp/bkJz/p23/mQP5zHl03Olm+dTGAR9WVSTWzumEilLcYOhQBagGiSuBzo8A8LqPq8NLy/QGrNG1pz0fR4bxSbCNs62kx0VcAMINzTIDCQ4GJO1xUQp3WPR0eYxrdqOmzAGX+xqMh890DWT6ldTKSj4gbJvYx3ncNCv3wMBzwRY+Tkrm9cy8/loNI0FuPy5BWsOx+GqOdYQ52pQpDRqz/+qwj3t1iqynswTMqMypRAtoSXWlsB3Q5oC0wxgrcJgsqymkxCIYw0mCSfB5sg2Rd8T4=");
         }
     }
+
 
 }
