@@ -199,6 +199,7 @@ public class GameManager {
         world.getBlockAt(199, 61, 21 ).setType(Material.LODESTONE);
 
         world.getBlockAt(186 ,54, 46).setType(Material.REDSTONE_BLOCK);
+        world.getBlockAt(187, 55, 43).setType(Material.RED_STAINED_GLASS);
         if(world.getBlockAt(188 ,54, 46).getType() == Material.REDSTONE_BLOCK) world.getBlockAt(188, 54, 46).setType(Material.AIR);
 
 
@@ -209,6 +210,7 @@ public class GameManager {
             }
         }
         Bukkit.getWorld("world").getBlockAt(205, 72, 25).setType(Material.GRASS_BLOCK);
+        Bukkit.dispatchCommand(Bukkit.getServer().getConsoleSender(), "fill 187 61 44 188 61 43 minecraft:redstone_block");
         completedquests = 0;
     }
     public BlockManager getBlockManager(){

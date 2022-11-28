@@ -10,6 +10,8 @@ import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 public class JoinListener implements Listener {
 
@@ -22,6 +24,7 @@ public class JoinListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event){
         event.getPlayer().teleport(new Location(Bukkit.getWorld("world"), 101, 96, 135, -180, 1));
+        event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.NIGHT_VISION, 999999999, 255, true, false));
 
         if(gameManager.isRunning()){
             event.getPlayer().setGameMode(GameMode.SPECTATOR);
